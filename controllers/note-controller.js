@@ -17,7 +17,6 @@ export class NoteController {
     async listAll(req, res) {
         
         const dbConnection = await this.dbConnection();
-
         console.log('connexion db reussie');
         const [results, fields] = await dbConnection.query('SELECT * from notes');
         res.send(results);
@@ -28,8 +27,6 @@ export class NoteController {
 
         console.log('note Controller create');
         const newNote = req.body;
-        console.log('newNote :', newNote);
-
         const dbConnection = await this.dbConnection();
         const [results, fields] = await dbConnection.query('INSERT INTO notes (text) VALUES (?)', [req.body.text]);
 
@@ -42,5 +39,16 @@ export class NoteController {
         const [results, fields] = await dbConnection.query('DELETE FROM notes where id = ?', [req.params.id]);
 
         res.json({ message: "note deleted", results });
+    }
+
+    async update (req, res) {
+
+        const dbConnection = await this.dbConnection();
+
+        const id = req.params.id;
+        const value = req.body.text;
+        const [results, fields] = await dbConnection.query('UPDATE notes SET text = ? WHERE id = ?', [value, id]);
+
+        res.json({ message: "note successfully updated", results });
     }
 }
